@@ -12,7 +12,7 @@ CREATE TABLE userdg (
 CREATE TABLE platforms (
   id SERIAL PRIMARY KEY,
   name VARCHAR(100),
-  constructor VARCHAR(100) NULL
+  platformConstructor VARCHAR(100) NULL
 );
 
 CREATE TABLE media (
@@ -39,3 +39,39 @@ CREATE TABLE media_platforms (
   platform_id INTEGER REFERENCES platforms(id),
   PRIMARY KEY (media_id, platform_id)
 );
+
+INSERT INTO platforms (name, constructor) VALUES
+('DVD', 'Various'),
+('Blu-Ray', 'Various'),
+('Blu-Ray 4K', 'Various'),
+('PlayStation', 'Sony'),
+('PlayStation 2', 'Sony'),
+('PlayStation 3', 'Sony'),
+('PlayStation 4', 'Sony'),
+('PlayStation 5', 'Sony'),
+('PSP', 'Sony'),
+('PlayStation Vita', 'Sony'),
+('Nintendo Entertainment System', 'Nintendo'),
+('Super Nintendo', 'Nintendo'),
+('Nintendo 64', 'Nintendo'),
+('GameCube', 'Nintendo'),
+('Wii', 'Nintendo'),
+('Wii U', 'Nintendo'),
+('Switch', 'Nintendo'),
+('Game Boy', 'Nintendo'),
+('Game Boy Advance', 'Nintendo'),
+('Nintendo DS', 'Nintendo'),
+('Nintendo 3DS', 'Nintendo'),
+('Xbox', 'Microsoft'),
+('Xbox 360', 'Microsoft'),
+('Xbox One', 'Microsoft'),
+('Xbox Series X', 'Microsoft'),
+('Master System', 'Sega'),
+('Genesis', 'Sega'),
+('Sega CD', 'Sega'),
+('32X', 'Sega'),
+('Saturn', 'Sega'),
+('Dreamcast', 'Sega'),
+('Game Gear', 'Sega'),
+('Lynx', 'Atari'),
+('Jaguar', 'Atari');
