@@ -26,6 +26,7 @@ import { MoviedatabaseService } from './services/moviedatabase/moviedatabase.ser
       entities: [Userdg, Media, Platform],
       synchronize: false,
       dropSchema: false,
+      logging: true,
     }),
     AuthModule,
     UserdgModule,
