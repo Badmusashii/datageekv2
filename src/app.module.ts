@@ -10,6 +10,8 @@ import { Platform } from './platforms/entities/platform.entity';
 import { Media } from './media/entities/media.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
+import { GiantBombService } from './services/giant-bomb/giant-bomb.service';
+import { MoviedatabaseService } from './services/moviedatabase/moviedatabase.service';
 
 @Module({
   imports: [
@@ -31,6 +33,6 @@ import { ConfigModule } from '@nestjs/config';
     MediaModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, GiantBombService, MoviedatabaseService],
 })
 export class AppModule {}
