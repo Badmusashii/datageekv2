@@ -25,6 +25,12 @@ export class PlatformsController {
     return this.platformsService.findAll();
   }
 
+  @Get(':id')
+  @UseGuards(AuthGuard('jwt'))
+  findOne(@Param('id') id: string) {
+    return this.platformsService.findOne(+id);
+  }
+
   @ApiBearerAuth()
   @Get('toggle')
   @UseGuards(AuthGuard('jwt'))
