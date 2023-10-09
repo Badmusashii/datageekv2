@@ -1,7 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
 import { MediaService } from './media.service';
 import { CreateMediaDto } from './dto/create-media.dto';
 import { UpdateMediaDto } from './dto/update-media.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('media')
 export class MediaController {
@@ -10,6 +21,18 @@ export class MediaController {
   @Post()
   create(@Body() createMediaDto: CreateMediaDto) {
     return this.mediaService.create(createMediaDto);
+  }
+
+  @Post('search/:platformId')
+  @UseGuards(AuthGuard('jwt'))
+  async searchMedia(
+    @Request() req,
+    @Body('title') title: string,
+    @Param('platformId') platformId: number,
+  ) {
+    const userId = req.user.id;
+    console.log(userId);
+    return this.mediaService.findMediaByTitle(title, platformId, userId);
   }
 
   @Get()

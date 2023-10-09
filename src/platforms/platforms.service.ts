@@ -32,6 +32,11 @@ export class PlatformsService {
     return this.platformsRepository.find();
   }
 
+  findOne(id: number) {
+    console.log('ID received in findOne:', id);
+    return this.platformsRepository.findOneOrFail({ where: { id } });
+  }
+
   async fetchUserPlatformStates(
     userdgId: number,
   ): Promise<{ [id: number]: boolean }> {
