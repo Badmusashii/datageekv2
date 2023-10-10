@@ -70,9 +70,12 @@ export class MediaService {
     // const media = allMedia.filter((media) =>
     //   media.title.startsWith(partialTitle),
     // );
-    const media = allMedia.filter(
-      (media) => media.title && media.title.startsWith(partialTitle),
-    );
+    // const media = allMedia.filter(
+    //   (media) => media.title && media.title.startsWith(partialTitle),
+    // );
+    const media = allMedia
+      .filter((media) => media.title && media.title.startsWith(partialTitle))
+      .map(({ users, ...media }) => media);
 
     if (!allMedia.length) {
       if (platformId > 0 && platformId < 4) {
@@ -85,6 +88,27 @@ export class MediaService {
       }
     }
     return media;
+  }
+  async getAllMediaByPlatformAndUser(platformId: number, userId: number) {
+    const allMedia = await this.mediaRepository.find({
+      relations: ['platforms', 'users'],
+      where: {
+        platforms: {
+          id: platformId,
+        },
+        users: {
+          id: userId,
+        },
+      },
+      join: {
+        alias: 'media',
+        leftJoinAndSelect: {
+          platform: 'media.platforms',
+          user: 'media.users',
+        },
+      },
+    });
+    return allMedia.map(({ users, ...rest }) => rest);
   }
 
   create(createMediaDto: CreateMediaDto) {

@@ -35,6 +35,15 @@ export class MediaController {
     return this.mediaService.findMediaByTitle(title, platformId, userId);
   }
 
+  @Get('all/:platformId')
+  @UseGuards(AuthGuard('jwt'))
+  async getAllMediaByPlatformAndUser(
+    @Request() req,
+    @Param('platformId') platformId: number,
+  ) {
+    const userId = req.user.id;
+    return this.mediaService.getAllMediaByPlatformAndUser(platformId, userId);
+  }
   @Get()
   findAll() {
     return this.mediaService.findAll();
