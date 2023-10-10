@@ -80,7 +80,12 @@ export class AuthService {
     if (userdg && (await bcrypt.compare(password, userdg.password))) {
       const payload = { username, sub: userdg.id };
       const accessToken = this.jwtService.sign(payload);
-      return { accessToken };
+      const refreshTokenPayload = { username, sub: userdg.id };
+      const refreshToken = this.jwtService.sign(refreshTokenPayload, {
+        expiresIn: '7d',
+      });
+
+      return { accessToken, refreshToken };
     } else {
       throw new UnauthorizedException('Probleme dans vos identifiants !');
     }
@@ -98,5 +103,25 @@ export class AuthService {
       expiresIn: '1h',
     });
     return token;
+  }
+  async refreshToken(
+    oldRefreshToken: string,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
+    const decoded = this.jwtService.verify(oldRefreshToken);
+    if (!decoded) {
+      throw new UnauthorizedException('Refresh Token Invalide !');
+    }
+    const newAccessToken = this.jwtService.sign({
+      username: decoded.username,
+      sub: decoded.sub,
+    });
+    const newRefreshToken = this.jwtService.sign(
+      {
+        username: decoded.username,
+        sub: decoded.sub,
+      },
+      { expiresIn: '7d' },
+    );
+    return { accessToken: newAccessToken, refreshToken: newRefreshToken };
   }
 }
