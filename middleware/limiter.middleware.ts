@@ -13,6 +13,8 @@ export class RateLimiterMiddleware implements NestMiddleware {
 
   use(req: Request, res: Response, next: NextFunction) {
     console.log('RateLimiterMiddleware is being used');
+    console.log('Cookies avant rateLimit:', req.cookies);
     this.limiter(req, res, next); // Utilise cette instance unique pour toutes les requêtes
+    console.log('Cookies après rateLimit:', req.cookies);
   }
 }
