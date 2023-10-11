@@ -30,9 +30,15 @@ export class MediaController {
     @Body('title') title: string,
     @Param('platformId') platformId: number,
   ) {
+    // Désinfection du champ de recherche
+    const sanitizedTitle = title.replace(/[^a-zA-Z0-9 ]/g, '');
     const userId = req.user.id;
     console.log(userId);
-    return this.mediaService.findMediaByTitle(title, platformId, userId);
+    return this.mediaService.findMediaByTitle(
+      sanitizedTitle,
+      platformId,
+      userId,
+    );
   }
 
   @Get('all/:platformId')

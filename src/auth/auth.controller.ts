@@ -54,13 +54,17 @@ export class AuthController {
   }
   @Post('refresh')
   async refreshToken(@Request() req, @Res() res) {
-    const oldRefreshToken = req.cookies['Refresh']; // Ou comment tu l'obtiens actuellement
+    console.log('les cookies => ' + req.cookies);
+    console.log('le cookie => ' + req.cookie);
+    const oldRefreshToken = req.cookies['refreshToken'];
     const { accessToken, refreshToken } = await this.authService.refreshToken(
       oldRefreshToken,
     );
 
-    res.cookie('Refresh', refreshToken, {
-      // options pour le cookie
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict',
     });
 
     return res.json({ accessToken });

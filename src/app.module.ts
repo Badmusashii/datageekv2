@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
@@ -12,6 +12,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { GiantBombService } from './services/giant-bomb/giant-bomb.service';
 import { MoviedatabaseService } from './services/moviedatabase/moviedatabase.service';
+// Importation du middleware pour la limitation de taux de requetes
+import { RateLimiterMiddleware } from 'middleware/limiter.middleware';
 
 @Module({
   imports: [
@@ -36,4 +38,11 @@ import { MoviedatabaseService } from './services/moviedatabase/moviedatabase.ser
   controllers: [AppController],
   providers: [AppService, GiantBombService, MoviedatabaseService],
 })
-export class AppModule {}
+export class AppModule {
+  // Cette méthode permet de configurer des middlewares pour certaines routes ou pour toutes les routes
+  configure(consumer: MiddlewareConsumer) {
+    // On applique le middleware de limitation de taux (RateLimiterMiddleware) à toutes les routes ('*')
+    // Cela signifie que chaque requête entrante passera par ce middleware avant d'atteindre le contrôleur
+    consumer.apply(RateLimiterMiddleware).forRoutes('*'); // Appliquer pour toutes les routes
+  }
+}

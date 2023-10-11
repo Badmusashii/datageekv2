@@ -142,7 +142,7 @@ export class PlatformsService {
     // const platform = await this.platformsRepository.findOne({
     //   where: { id: platformId },
     // });
-    // const platformStates = toggleState.platformStates || {};
+    // const platformStates = State.platformStates || {};
     const platformStates = toggleState.platformStates || {};
 
     const platformIds = Object.keys(platformStates).map((key) => {
