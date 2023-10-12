@@ -14,6 +14,8 @@ import { GiantBombService } from './services/giant-bomb/giant-bomb.service';
 import { MoviedatabaseService } from './services/moviedatabase/moviedatabase.service';
 // Importation du middleware pour la limitation de taux de requetes
 import { RateLimiterMiddleware } from 'middleware/limiter.middleware';
+// Import du service pour generere de nouveaux certificats
+import { CertGenerateService } from './services/cert-generate/cert-generate.service';
 
 @Module({
   imports: [
@@ -36,7 +38,12 @@ import { RateLimiterMiddleware } from 'middleware/limiter.middleware';
     MediaModule,
   ],
   controllers: [AppController],
-  providers: [AppService, GiantBombService, MoviedatabaseService],
+  providers: [
+    AppService,
+    GiantBombService,
+    MoviedatabaseService,
+    CertGenerateService,
+  ],
 })
 export class AppModule {
   // Cette méthode permet de configurer des middlewares pour certaines routes ou pour toutes les routes

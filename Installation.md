@@ -9,7 +9,12 @@ npm install @types/node --save-dev
 npm install @nestjs/config
 npm i axios
 
-Essaie d'installation d'un Certificat SSL auto-signé
+Installation d'un Certificat SSL auto-signé
 openssl genpkey -out private-key.pem -algorithm RSA -aes256
 openssl req -new -key private-key.pem -out csr.pem
 openssl x509 -req -days 365 -in csr.pem -signkey private-key.pem -out certificate.pem
+
+---
+
+Pour verifier la date de fin du certificat
+openssl x509 -in ./certificate.pem -noout -enddate
