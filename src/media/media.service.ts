@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateMediaDto } from './dto/create-media.dto';
 import { UpdateMediaDto } from './dto/update-media.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -6,6 +6,7 @@ import { Media } from './entities/media.entity';
 import { Like, Repository } from 'typeorm';
 import { GiantBombService } from 'src/services/giant-bomb/giant-bomb.service';
 import { MoviedatabaseService } from 'src/services/moviedatabase/moviedatabase.service';
+import { Userdg } from 'src/userdg/entities/userdg.entity';
 
 @Injectable()
 export class MediaService {
@@ -14,6 +15,8 @@ export class MediaService {
     private readonly mediaRepository: Repository<Media>,
     private readonly giantBomb: GiantBombService,
     private readonly movieBDD: MoviedatabaseService,
+    @InjectRepository(Userdg)
+    private userRepository: Repository<Userdg>,
   ) {}
   async findMediaByTitle(
     partialTitle: string,
@@ -80,14 +83,14 @@ export class MediaService {
     if (!allMedia.length) {
       if (platformId > 0 && platformId < 4) {
         const tmbd = await this.movieBDD.searchMovie(partialTitle);
-        return tmbd;
+        return { source: 'tmbd', data: tmbd };
       } else {
         const giantbombData = await this.giantBomb.searchGame(partialTitle);
         // Traitez les données reçues si nécessaire
-        return giantbombData;
+        return { source: 'giantbomb', data: giantbombData };
       }
     }
-    return media;
+    return { source: 'local', data: media };
   }
   async getAllMediaByPlatformAndUser(platformId: number, userId: number) {
     const allMedia = await this.mediaRepository.find({
@@ -127,7 +130,38 @@ export class MediaService {
     return `This action updates a #${id} media`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} media`;
+  async removeRelationUserMedia(userId: number, mediaId: number) {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: ['medias'],
+    });
+    const media = await this.mediaRepository.findOne({
+      where: { id: mediaId },
+    });
+    if (!user) {
+      throw new NotFoundException(
+        `Impossible de trouver l'utilisateur avec l'ID ${userId}`,
+      );
+    }
+    if (!media) {
+      throw new NotFoundException(
+        `Nous ne parvenons pas à trouver le titre que vous essayez de supprimé`,
+      );
+    }
+    console.log(user);
+    console.log(user.medias);
+
+    user.medias = user.medias.filter((media) => +media.id !== +mediaId);
+
+    console.log('apres filter ' + JSON.stringify(user.medias));
+
+    // Sauvegardez l'utilisateur, ce qui mettra à jour la table de jointure user_media.
+    await this.userRepository.save(user);
+
+    console.log(user);
+
+    return {
+      message: `${user.username} ne possede plus le titre ${media.title}`,
+    };
   }
 }

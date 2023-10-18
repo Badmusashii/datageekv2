@@ -17,6 +17,62 @@ export class MoviedatabaseService {
       throw new Error(`Failed to fetch from TMDB API: ${error.message}`);
     }
   }
+  // async getMovieDetailsWithVideos(movieId: number) {
+  //   // const url = `${this.baseURL}/movie/${movieId}/videos?api_key=${this.apiKey}&language=fr-FR`;
+  //   const url = `${this.baseURL}/movie/${movieId}?api_key=${this.apiKey}&language=fr-FR&append_to_response=videos`;
+
+  //   try {
+  //     const response = await axios.get(url);
+  //     return response.data;
+  //   } catch (error) {
+  //     throw new Error(
+  //       `Failed to fetch movie videos from TMDB API: ${error.message}`,
+  //     );
+  //   }
+  // }
+
+  async getMovieDetailsWithVideos(movieId: number) {
+    const url = `${this.baseURL}/movie/${movieId}?api_key=${this.apiKey}&language=fr-FR&append_to_response=videos`;
+
+    try {
+      const response = await axios.get(url);
+      const apiResponse = response.data;
+
+      if (apiResponse && apiResponse.videos && apiResponse.videos.results) {
+        let filteredVideos = apiResponse.videos.results
+          .filter(
+            (video: {
+              iso_639_1: string;
+              iso_3166_1: string;
+              site: string;
+              size: number;
+              type: string;
+              name: string;
+            }) =>
+              (video.iso_639_1 === 'fr' || video.iso_3166_1 === 'FR') &&
+              video.site === 'YouTube' &&
+              video.size === 1080 &&
+              video.type === 'Trailer' &&
+              !video.name.includes('VOST'),
+          )
+          .slice(0, 2); // Prendre seulement les deux premières vidéos
+
+        // Si aucun résultat n'est trouvé, prendre les deux premières vidéos sans filtre
+        if (filteredVideos.length === 0) {
+          filteredVideos = apiResponse.videos.results.slice(0, 2);
+        }
+
+        // Remplace les résultats vidéo originaux par les vidéos filtrées
+        apiResponse.videos.results = filteredVideos;
+      }
+
+      return apiResponse;
+    } catch (error) {
+      throw new Error(
+        `Failed to fetch movie videos from TMDB API: ${error.message}`,
+      );
+    }
+  }
 
   async getSeriesDetails(seriesId: number) {
     const url = `${this.baseURL}/tv/${seriesId}?api_key=${this.apiKey}&language=fr-FR`;
@@ -26,7 +82,9 @@ export class MoviedatabaseService {
     };
     try {
       const response = await axios.get(url, { headers });
-      return response.data;
+      const apiResponse = response.data;
+
+      return apiResponse;
     } catch (error) {
       throw new Error(
         `Failed to fetch series details from TMDB API: ${error.message}`,

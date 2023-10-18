@@ -5,8 +5,9 @@ import { MediaController } from './media.controller';
 import { Media } from './entities/media.entity';
 import { GiantBombService } from 'src/services/giant-bomb/giant-bomb.service';
 import { MoviedatabaseService } from 'src/services/moviedatabase/moviedatabase.service';
+import { Userdg } from 'src/userdg/entities/userdg.entity';
 @Module({
-  imports: [TypeOrmModule.forFeature([Media])],
+  imports: [TypeOrmModule.forFeature([Media, Userdg])],
   controllers: [MediaController],
   providers: [MediaService, GiantBombService, MoviedatabaseService],
   exports: [MediaService, TypeOrmModule.forFeature([Media])],
