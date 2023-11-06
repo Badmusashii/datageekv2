@@ -8,13 +8,10 @@ export class RateLimiterMiddleware implements NestMiddleware {
   // Crée une seule instance du middleware rateLimit
   private limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 1000, // limite chaque IP à 100 requêtes par fenêtre
+    max: 200, // limite chaque IP à 200 requêtes par fenêtre
   });
 
   use(req: Request, res: Response, next: NextFunction) {
-    console.log('RateLimiterMiddleware is being used');
-    console.log('Cookies avant rateLimit:', req.cookies);
     this.limiter(req, res, next); // Utilise cette instance unique pour toutes les requêtes
-    console.log('Cookies après rateLimit:', req.cookies);
   }
 }

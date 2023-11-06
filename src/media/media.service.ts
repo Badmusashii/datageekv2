@@ -23,36 +23,6 @@ export class MediaService {
     platformId: number,
     userId: number,
   ) {
-    // const media = await this.mediaRepository.findOne({ where: { title } });
-    // const media = await this.mediaRepository
-    //   .createQueryBuilder('media')
-    //   .leftJoinAndSelect('media.platforms', 'platform')
-    //   .leftJoinAndSelect('media.users', 'user')
-    //   .where('media.title = :title', { title })
-    //   .andWhere('platform.id = :platformId', { platformId })
-    //   .andWhere('user.id = :userId', { userId })
-    //   .getOne();
-
-    // const media = await this.mediaRepository
-    //   .createQueryBuilder('media')
-    //   .leftJoinAndSelect('media.platforms', 'platform')
-    //   .leftJoinAndSelect('media.users', 'user')
-    //   .where('media.title LIKE :partialTitle', {
-    //     partialTitle: `${partialTitle}%`,
-    //   })
-    //   .andWhere('platform.id = :platformId', { platformId })
-    //   .andWhere('user.id = :userId', { userId })
-    //   .getMany();
-
-    // const media = await this.mediaRepository.findOne({
-    //   where: { title: partialTitle },
-    //   relations: ['platforms', 'users'],
-    // });
-
-    // const allMedia = await this.mediaRepository.find({
-    //   relations: ['platforms', 'users'],
-    // });
-
     const allMedia = await this.mediaRepository.find({
       relations: ['platforms', 'users'],
       where: {
@@ -70,12 +40,6 @@ export class MediaService {
       },
     });
 
-    // const media = allMedia.filter((media) =>
-    //   media.title.startsWith(partialTitle),
-    // );
-    // const media = allMedia.filter(
-    //   (media) => media.title && media.title.startsWith(partialTitle),
-    // );
     const media = allMedia
       .filter((media) => media.title && media.title.startsWith(partialTitle))
       .map(({ users, ...media }) => media);

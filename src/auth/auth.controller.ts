@@ -34,9 +34,9 @@ export class AuthController {
         loginDto,
       );
       res.cookie('refreshToken', refreshToken, {
-        httpOnly: true,
-        secure: true,
-        sameSite: 'lax',
+        httpOnly: true, // Cookie accessible uniquement côté serveur, pas via JavaScript
+        secure: true, // Cookie transmis uniquement sur des connexions HTTPS sécurisées
+        sameSite: 'lax', // Politique SameSite, permettant au cookie d'être envoyé lors de la navigation entre sites sous certaines conditions
       });
       res.json({ accessToken, refreshToken });
     } catch (error) {

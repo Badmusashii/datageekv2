@@ -6,10 +6,12 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { UserdgService } from './userdg.service';
 import { CreateUserdgDto } from './dto/create-userdg.dto';
 import { UpdateUserdgDto } from './dto/update-userdg.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('userdg')
 export class UserdgController {
@@ -18,6 +20,11 @@ export class UserdgController {
   @Post()
   create(@Body() createUserdgDto: CreateUserdgDto) {
     return this.userdgService.create(createUserdgDto);
+  }
+  @Post('/validate')
+  @UseGuards(AuthGuard('jwt'))
+  validateToken() {
+    return true;
   }
 
   @Get()

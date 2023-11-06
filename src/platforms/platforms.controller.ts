@@ -54,11 +54,9 @@ export class PlatformsController {
     @Param('platformId') platformId: number,
     @Body() body: any,
   ) {
-    // console.log('Payload recu' + JSON.stringify(mediaData));
-    // const userId = req.user.id;
     const mediaData = body;
     const userId = req.user.id;
-    // mediaData = mediaData.title;
+
     console.log(JSON.stringify(req.user, null, 2));
     console.log('Corps de la requête : ', JSON.stringify(body, null, 2));
 

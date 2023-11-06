@@ -18,3 +18,5 @@ openssl x509 -req -days 365 -in csr.pem -signkey private-key.pem -out certificat
 
 Pour verifier la date de fin du certificat
 openssl x509 -in ./certificate.pem -noout -enddate
+
+---

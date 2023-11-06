@@ -17,19 +17,6 @@ export class MoviedatabaseService {
       throw new Error(`Failed to fetch from TMDB API: ${error.message}`);
     }
   }
-  // async getMovieDetailsWithVideos(movieId: number) {
-  //   // const url = `${this.baseURL}/movie/${movieId}/videos?api_key=${this.apiKey}&language=fr-FR`;
-  //   const url = `${this.baseURL}/movie/${movieId}?api_key=${this.apiKey}&language=fr-FR&append_to_response=videos`;
-
-  //   try {
-  //     const response = await axios.get(url);
-  //     return response.data;
-  //   } catch (error) {
-  //     throw new Error(
-  //       `Failed to fetch movie videos from TMDB API: ${error.message}`,
-  //     );
-  //   }
-  // }
 
   async getMovieDetailsWithVideos(movieId: number) {
     const url = `${this.baseURL}/movie/${movieId}?api_key=${this.apiKey}&language=fr-FR&append_to_response=videos`;
