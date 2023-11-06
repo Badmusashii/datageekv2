@@ -17,11 +17,10 @@ export class Media {
   title: string;
 
   @Column({ nullable: true })
-  publisher: string;
-
-  @Column({ nullable: true })
   yearofrelease: number;
 
+  @Column({ nullable: true })
+  idapi: string;
   // @ManyToMany(() => Userdg)
   // users: Userdg[];
 

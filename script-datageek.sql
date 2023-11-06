@@ -18,8 +18,8 @@ CREATE TABLE platforms (
 CREATE TABLE media (
   id SERIAL PRIMARY KEY,
   title VARCHAR(200),
-  publisher VARCHAR(100) NULL,
-  yearofrelease INTEGER NULL
+  yearofrelease INTEGER NULL,
+  idapi VARCHAR(10) NULL
 );
 
 CREATE TABLE user_media (

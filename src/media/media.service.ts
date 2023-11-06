@@ -30,6 +30,9 @@ export class MediaService {
         platforms: {
           id: platformId,
         },
+        users: {
+          id: userId,
+        },
       },
       join: {
         alias: 'media',
