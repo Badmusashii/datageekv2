@@ -44,6 +44,10 @@ export class AuthController {
       res.status(401).json({ error: "Erreur d'authentification" });
     }
   }
+  @Post('logout')
+  logout() {
+    return this.authService.logout();
+  }
 
   @Post('confirmation')
   async confirmation(

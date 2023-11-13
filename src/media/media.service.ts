@@ -3,7 +3,7 @@ import { CreateMediaDto } from './dto/create-media.dto';
 import { UpdateMediaDto } from './dto/update-media.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Media } from './entities/media.entity';
-import { Like, Repository } from 'typeorm';
+import { In, Like, MoreThan, Repository } from 'typeorm';
 import { GiantBombService } from 'src/services/giant-bomb/giant-bomb.service';
 import { MoviedatabaseService } from 'src/services/moviedatabase/moviedatabase.service';
 import { Userdg } from 'src/userdg/entities/userdg.entity';
@@ -130,5 +130,70 @@ export class MediaService {
     return {
       message: `${user.username} ne possede plus le titre ${media.title}`,
     };
+  }
+  async getRandomMediaForUser(
+    userId: number,
+    type: string,
+  ): Promise<{ title: string; poster: string }> {
+    let userMedias;
+
+    if (type === 'film') {
+      // Si c'est un film (platformId 1, 2, ou 3)
+      userMedias = await this.mediaRepository.find({
+        where: {
+          users: { id: userId },
+          platforms: { id: In([1, 2, 3]) }, // In est importé de TypeORM
+        },
+        relations: ['users', 'platforms'],
+      });
+    } else if (type === 'jeux') {
+      // Si c'est un jeu (platformId supérieur à 3)
+      userMedias = await this.mediaRepository.find({
+        where: {
+          users: { id: userId },
+          platforms: { id: MoreThan(3) }, // MoreThan est importé de TypeORM
+        },
+        relations: ['users', 'platforms'],
+      });
+    }
+
+    if (userMedias.length === 0) {
+      return null; // L'utilisateur n'a aucun média correspondant
+    }
+
+    const randomMedia =
+      userMedias[Math.floor(Math.random() * userMedias.length)];
+
+    // Suppression des propriétés 'users' et 'platforms' de l'objet sélectionné
+    delete randomMedia.users;
+    delete randomMedia.platforms;
+    delete randomMedia.id;
+    delete randomMedia.yearofrelease;
+
+    try {
+      if (type === 'film') {
+        const movieDetails = await this.movieBDD.getMovieDetailsWithVideos(
+          randomMedia.idapi,
+        );
+        return {
+          title: randomMedia.title,
+          poster: movieDetails.poster_path, // Modifier selon la structure de la réponse
+        };
+      } else if (type === 'jeux') {
+        const gameInfo = await this.giantBomb.searchGameByGuid(
+          randomMedia.idapi,
+        );
+        return {
+          title: randomMedia.title,
+          poster: gameInfo.results.image.medium_url, // Modifier selon la structure de la réponse
+        };
+      }
+    } catch (error) {
+      throw new Error(
+        `Erreur lors de la récupération des informations supplémentaires: ${error.message}`,
+      );
+    }
+
+    return randomMedia;
   }
 }

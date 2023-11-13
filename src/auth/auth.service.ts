@@ -124,4 +124,9 @@ export class AuthService {
     );
     return { accessToken: newAccessToken, refreshToken: newRefreshToken };
   }
+  async logout() {
+    // Générer un nouveau refreshToken obsolète
+    const dummyRefreshToken = this.jwtService.sign({}, { expiresIn: '1s' });
+    return { refreshToken: dummyRefreshToken };
+  }
 }

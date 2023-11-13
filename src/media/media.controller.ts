@@ -10,6 +10,8 @@ import {
   UseGuards,
   HttpException,
   HttpStatus,
+  NotFoundException,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { MediaService } from './media.service';
 import { CreateMediaDto } from './dto/create-media.dto';
@@ -48,6 +50,26 @@ export class MediaController {
       platformId,
       userId,
     );
+  }
+
+  @Post('random')
+  @UseGuards(AuthGuard('jwt'))
+  async getRandomMedia(@Request() req, @Body('type') type: string) {
+    const userId = req.user.id; // Assurez-vous que l'utilisateur est authentifié et a un ID utilisateur valide
+    try {
+      const media = await this.mediaService.getRandomMediaForUser(userId, type);
+      if (media) {
+        return media;
+      } else {
+        throw new NotFoundException(
+          "Aucun titre trouvé pour l'utilisateur et la plateforme spécifiée.",
+        );
+      }
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Erreur lors de la récupération du titre aléatoire.',
+      );
+    }
   }
 
   @Get('all/:platformId')

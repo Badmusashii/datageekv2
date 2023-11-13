@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Request,
 } from '@nestjs/common';
 import { UserdgService } from './userdg.service';
 import { CreateUserdgDto } from './dto/create-userdg.dto';
@@ -42,8 +43,12 @@ export class UserdgController {
     return this.userdgService.update(+id, updateUserdgDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userdgService.remove(+id);
+  @Delete()
+  @UseGuards(AuthGuard('jwt'))
+  async remove(@Request() req) {
+    const userId = req.user.id; // Supposons que l'ID de l'utilisateur est stocké dans req.user.id
+    console.log(userId);
+    await this.userdgService.remove(userId);
+    return { message: `User with ID ${userId} successfully deleted.` };
   }
 }
