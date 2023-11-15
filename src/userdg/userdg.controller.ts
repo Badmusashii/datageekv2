@@ -33,9 +33,12 @@ export class UserdgController {
     return this.userdgService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userdgService.findOne(+id);
+  @Get('user/find')
+  @UseGuards(AuthGuard('jwt'))
+  findOne(@Request() req) {
+    const userId = req.user.id;
+    console.log(userId);
+    return this.userdgService.findOne(+userId);
   }
 
   @Patch(':id')

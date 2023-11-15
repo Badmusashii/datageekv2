@@ -20,7 +20,18 @@ export class UserdgService {
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} userdg`;
+    const user = this.userRepository
+      .createQueryBuilder('user')
+      .select([
+        'user.id',
+        'user.username',
+        'user.email',
+        'user.name',
+        'user.surname',
+      ])
+      .where('user.id = :id', { id })
+      .getOne();
+    return user;
   }
 
   update(id: number, updateUserdgDto: UpdateUserdgDto) {

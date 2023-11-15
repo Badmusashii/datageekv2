@@ -131,6 +131,20 @@ export class MediaController {
       );
     }
   }
+  @Get('movie-poster/:movieId')
+  @UseGuards(AuthGuard('jwt'))
+  async getMoviePoster(@Param('movieId') movieId: number) {
+    try {
+      const poster = await this.movieDatabaseService.getMoviePoster(movieId);
+      console.log(poster, 'controleur back');
+      return poster;
+    } catch (error) {
+      throw new HttpException(
+        `Failed to fetch movie poster: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateMediaDto: UpdateMediaDto) {

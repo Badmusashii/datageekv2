@@ -78,4 +78,20 @@ export class MoviedatabaseService {
       );
     }
   }
+  async getMoviePoster(movieId: number) {
+    const url = `${this.baseURL}/movie/${movieId}?api_key=${this.apiKey}&language=fr-FR`;
+
+    try {
+      const response = await axios.get(url);
+      const apiResponse = response.data;
+
+      return {
+        posterPath: apiResponse.poster_path, // Retourne uniquement le chemin de l'affiche du film
+      };
+    } catch (error) {
+      throw new Error(
+        `Failed to fetch movie poster from TMDB API: ${error.message}`,
+      );
+    }
+  }
 }

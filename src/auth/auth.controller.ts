@@ -5,6 +5,7 @@ import {
   UseGuards,
   Request,
   Res,
+  Patch,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
@@ -12,6 +13,7 @@ import { LoginDto } from './dto/login.dto';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { Response } from 'express';
+import { UpdateAuthDto } from './dto/update-auth.dto';
 
 @ApiTags('Les routes pour la gestion des utilisateurs')
 @Controller('auth')
@@ -72,5 +74,16 @@ export class AuthController {
     });
 
     return res.json({ accessToken });
+  }
+  @Patch('update')
+  @UseGuards(AuthGuard('jwt'))
+  async updateProfile(
+    @Request() req,
+    @Body() updateDto: UpdateAuthDto,
+  ): Promise<{ message: string }> {
+    const userId = req.user.id;
+    console.log(req);
+    console.log(updateDto);
+    return this.authService.updateProfile(userId, updateDto);
   }
 }

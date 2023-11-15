@@ -2,6 +2,7 @@ import {
   ConflictException,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { CreateAuthDto } from './dto/create-auth.dto';
@@ -12,6 +13,7 @@ import { Repository } from 'typeorm';
 import { LoginDto } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
 import * as jwt from 'jsonwebtoken';
+import { UpdateAuthDto } from './dto/update-auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -79,7 +81,9 @@ export class AuthService {
     const userdg = await this.userdgRepository.findOneBy({ username });
     if (userdg && (await bcrypt.compare(password, userdg.password))) {
       const payload = { username, sub: userdg.id };
-      const accessToken = this.jwtService.sign(payload);
+      const accessToken = this.jwtService.sign(payload, {
+        expiresIn: '30m',
+      });
       const refreshTokenPayload = { username, sub: userdg.id };
       const refreshToken = this.jwtService.sign(refreshTokenPayload, {
         expiresIn: '7d',
@@ -90,6 +94,7 @@ export class AuthService {
       throw new UnauthorizedException('Probleme dans vos identifiants !');
     }
   }
+
   async confirmation(createAuthDto: CreateAuthDto) {
     const payload = {
       username: createAuthDto.username,
@@ -128,5 +133,33 @@ export class AuthService {
     // Générer un nouveau refreshToken obsolète
     const dummyRefreshToken = this.jwtService.sign({}, { expiresIn: '1s' });
     return { refreshToken: dummyRefreshToken };
+  }
+  async updateProfile(
+    userId: number,
+    updateDto: UpdateAuthDto,
+  ): Promise<{ message: string }> {
+    const user = await this.userdgRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException(
+        `L'utilisateur avec l'ID ${userId} n'a pas été trouvé.`,
+      );
+    }
+    if (
+      updateDto.oldPassword &&
+      !(await bcrypt.compare(updateDto.oldPassword, user.password))
+    ) {
+      throw new UnauthorizedException('Mot de passe actuel incorrect.');
+    }
+
+    // Mettre à jour les champs de l'utilisateur
+    for (const key in updateDto) {
+      if (updateDto[key] !== undefined) {
+        user[key] = updateDto[key];
+      }
+    }
+
+    // Sauvegarder les modifications
+    await this.userdgRepository.save(user);
+    return { message: 'Profil mis à jour avec succès.' };
   }
 }
