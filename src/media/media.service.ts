@@ -177,7 +177,7 @@ export class MediaService {
         );
         return {
           title: randomMedia.title,
-          poster: movieDetails.poster_path, // Modifier selon la structure de la réponse
+          poster: `https://image.tmdb.org/t/p/w500${movieDetails.poster_path}`, // Modifier selon la structure de la réponse
         };
       } else if (type === 'jeux') {
         const gameInfo = await this.giantBomb.searchGameByGuid(
