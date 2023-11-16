@@ -145,6 +145,20 @@ export class MediaController {
       );
     }
   }
+  @Get('game-poster/:gameId')
+  @UseGuards(AuthGuard('jwt'))
+  async getGamePoster(@Param('gameId') gameId: number) {
+    try {
+      const poster = await this.giantBomb.getGamePoster(gameId);
+      console.log(poster, 'controleur back');
+      return { posterPath: poster };
+    } catch (error) {
+      throw new HttpException(
+        `Failed to fetch movie poster: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateMediaDto: UpdateMediaDto) {

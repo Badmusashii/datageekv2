@@ -65,4 +65,22 @@ export class GiantBombService {
       throw new Error(`Failed to fetch additional images: ${error.message}`);
     }
   }
+  async getGamePoster(guid: number) {
+    const gameDetailURL = `${this.baseURL}/game/${guid}/?api_key=${this.apiKey}&format=json&field_list=image`;
+
+    try {
+      const response = await axios.get(gameDetailURL);
+      const gameData = response.data;
+
+      // Récupérer l'URL de l'image 'super_url' ou 'original_url' (ou tout autre format d'image préféré)
+      const posterUrl = gameData.results.image.super_url;
+
+      // Retourner uniquement l'URL de l'affiche
+      return posterUrl;
+    } catch (error) {
+      throw new Error(
+        `Failed to fetch game poster from GiantBomb API: ${error.message}`,
+      );
+    }
+  }
 }
