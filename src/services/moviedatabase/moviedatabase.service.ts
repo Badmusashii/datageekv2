@@ -84,9 +84,11 @@ export class MoviedatabaseService {
     try {
       const response = await axios.get(url);
       const apiResponse = response.data;
+      console.log(apiResponse);
 
       return {
-        posterPath: apiResponse.poster_path, // Retourne uniquement le chemin de l'affiche du film
+        posterPath: apiResponse.poster_path,
+        idapi: apiResponse.id,
       };
     } catch (error) {
       throw new Error(

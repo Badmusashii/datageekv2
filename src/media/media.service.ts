@@ -134,7 +134,7 @@ export class MediaService {
   async getRandomMediaForUser(
     userId: number,
     type: string,
-  ): Promise<{ title: string; poster: string }> {
+  ): Promise<{ title: string; poster: string; id?: string }> {
     let userMedias;
 
     if (type === 'film') {
@@ -177,7 +177,8 @@ export class MediaService {
         );
         return {
           title: randomMedia.title,
-          poster: `https://image.tmdb.org/t/p/w500${movieDetails.poster_path}`, // Modifier selon la structure de la réponse
+          poster: `https://image.tmdb.org/t/p/w500${movieDetails.poster_path}`,
+          id: randomMedia.idapi, // Modifier selon la structure de la réponse
         };
       } else if (type === 'jeux') {
         const gameInfo = await this.giantBomb.searchGameByGuid(
@@ -185,7 +186,8 @@ export class MediaService {
         );
         return {
           title: randomMedia.title,
-          poster: gameInfo.results.image.medium_url, // Modifier selon la structure de la réponse
+          poster: gameInfo.results.image.medium_url,
+          id: randomMedia.idapi,
         };
       }
     } catch (error) {

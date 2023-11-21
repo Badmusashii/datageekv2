@@ -6,6 +6,7 @@ import {
   Request,
   Res,
   Patch,
+  Req,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
@@ -14,6 +15,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { Response } from 'express';
 import { UpdateAuthDto } from './dto/update-auth.dto';
+import { Request as ExpressRequest } from 'express'; // Importation avec un alias pour eviter le soucie de doublon avec Request de Nestjs/common
 
 @ApiTags('Les routes pour la gestion des utilisateurs')
 @Controller('auth')
@@ -59,21 +61,27 @@ export class AuthController {
     return { token };
   }
   @Post('refresh')
-  async refreshToken(@Request() req, @Res() res) {
-    console.log('les cookies => ' + req.cookies);
-    console.log('le cookie => ' + req.cookie);
-    const oldRefreshToken = req.cookies['refreshToken'];
-    const { accessToken, refreshToken } = await this.authService.refreshToken(
-      oldRefreshToken,
-    );
+  async refreshToken(@Request() req: ExpressRequest, @Res() res: Response) {
+    try {
+      const oldRefreshToken = req.cookies['refreshToken'];
 
-    res.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'lax',
-    });
+      const { accessToken, refreshToken } = await this.authService.refreshToken(
+        oldRefreshToken,
+      );
 
-    return res.json({ accessToken });
+      res.cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'lax',
+      });
+
+      // Renvoie du nouvel access token
+      return res.json({ accessToken });
+    } catch (error) {
+      return res
+        .status(401)
+        .json({ error: 'Erreur lors du rafraîchissement du token' });
+    }
   }
   @Patch('update')
   @UseGuards(AuthGuard('jwt'))

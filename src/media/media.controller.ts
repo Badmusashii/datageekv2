@@ -151,7 +151,7 @@ export class MediaController {
     try {
       const poster = await this.giantBomb.getGamePoster(gameId);
       console.log(poster, 'controleur back');
-      return { posterPath: poster };
+      return { posterPath: poster, id: gameId };
     } catch (error) {
       throw new HttpException(
         `Failed to fetch movie poster: ${error.message}`,

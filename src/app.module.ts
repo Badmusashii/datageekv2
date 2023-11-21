@@ -16,6 +16,7 @@ import { MoviedatabaseService } from './services/moviedatabase/moviedatabase.ser
 import { RateLimiterMiddleware } from 'middleware/limiter.middleware';
 // Import du service pour generere de nouveaux certificats
 import { CertGenerateService } from './services/cert-generate/cert-generate.service';
+import * as cookieParser from 'cookie-parser';
 
 @Module({
   imports: [
@@ -48,6 +49,9 @@ import { CertGenerateService } from './services/cert-generate/cert-generate.serv
 export class AppModule {
   // Cette méthode permet de configurer des middlewares pour certaines routes ou pour toutes les routes
   configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(cookieParser()) // Ajout de cookieParser
+      .forRoutes('*'); // Appliquer cookieParser à toutes les routes
     // On applique le middleware de limitation de taux (RateLimiterMiddleware) à toutes les routes ('*')
     // Cela signifie que chaque requête entrante passera par ce middleware avant d'atteindre le contrôleur
     consumer.apply(RateLimiterMiddleware).forRoutes('*'); // Appliquer pour toutes les routes
