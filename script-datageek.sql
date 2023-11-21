@@ -7,6 +7,7 @@ CREATE TABLE userdg (
   surname VARCHAR(255),
   email VARCHAR(255) UNIQUE,
   password VARCHAR(255)
+ 
 );
 
 CREATE TABLE platforms (
@@ -40,7 +41,7 @@ CREATE TABLE media_platforms (
   PRIMARY KEY (media_id, platform_id)
 );
 
-INSERT INTO platforms (name, constructor) VALUES
+INSERT INTO platforms (name, platformconstructor) VALUES
 ('DVD', 'Various'),
 ('Blu-Ray', 'Various'),
 ('Blu-Ray 4K', 'Various'),

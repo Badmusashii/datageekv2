@@ -14,12 +14,15 @@ import { LoginDto } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
 import * as jwt from 'jsonwebtoken';
 import { UpdateAuthDto } from './dto/update-auth.dto';
+import { UserdgService } from 'src/userdg/userdg.service';
+import { Response as ExpressResponse } from 'express'; // Importation avec un alias pour eviter le soucie de doublon avec Request de Nestjs/common
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(Userdg) private userdgRepository: Repository<Userdg>,
     private jwtService: JwtService,
+    private userdgService: UserdgService,
   ) {}
   // async register(token: string) {
   //   const { username, name, surname, email, password } = createAuthDto;
@@ -129,11 +132,18 @@ export class AuthService {
     );
     return { accessToken: newAccessToken, refreshToken: newRefreshToken };
   }
-  async logout() {
+  async logout(refreshToken: string, res: ExpressResponse) {
+    const decoded = this.jwtService.decode(refreshToken) as any;
+    if (!decoded) {
+      throw new UnauthorizedException('Token invalide ou expiré');
+    }
+
     // Générer un nouveau refreshToken obsolète
-    const dummyRefreshToken = this.jwtService.sign({}, { expiresIn: '1s' });
-    return { refreshToken: dummyRefreshToken };
+
+    res.clearCookie('refreshToken');
+    return res.json({ message: 'Déconnexion réussie' });
   }
+
   async updateProfile(
     userId: number,
     updateDto: UpdateAuthDto,

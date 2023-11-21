@@ -6,12 +6,14 @@ import { JwtStrategy } from './jwt.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Userdg } from 'src/userdg/entities/userdg.entity';
+import { UserdgModule } from '../userdg/userdg.module';
 import * as dotenv from 'dotenv';
 
 dotenv.config({ path: '.env' });
 
 @Module({
   imports: [
+    UserdgModule,
     TypeOrmModule.forFeature([Userdg]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
