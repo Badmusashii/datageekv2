@@ -48,7 +48,7 @@ export class AuthController {
         secure: true, // Cookie transmis uniquement sur des connexions HTTPS sécurisées
         sameSite: 'lax', // Politique SameSite, permettant au cookie d'être envoyé lors de la navigation entre sites sous certaines conditions
       });
-      res.json({ accessToken, refreshToken });
+      res.json({ accessToken });
     } catch (error) {
       // Gérer les erreurs ici
       res.status(401).json({ error: "Erreur d'authentification" });
