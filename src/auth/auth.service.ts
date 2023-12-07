@@ -15,6 +15,8 @@ import { JwtService } from '@nestjs/jwt';
 import * as jwt from 'jsonwebtoken';
 import { UpdateAuthDto } from './dto/update-auth.dto';
 import { UserdgService } from 'src/userdg/userdg.service';
+import { firstValueFrom } from 'rxjs';
+import { HttpService } from '@nestjs/axios';
 import { Response as ExpressResponse } from 'express'; // Importation avec un alias pour eviter le soucie de doublon avec Request de Nestjs/common
 
 @Injectable()
@@ -23,6 +25,7 @@ export class AuthService {
     @InjectRepository(Userdg) private userdgRepository: Repository<Userdg>,
     private jwtService: JwtService,
     private userdgService: UserdgService,
+    private axios: HttpService,
   ) {}
   // async register(token: string) {
   //   const { username, name, surname, email, password } = createAuthDto;
@@ -47,7 +50,24 @@ export class AuthService {
   //     }
   //   }
   // }
-  async register(token: string) {
+  async verifyRecaptcha(recaptchaResponse: string): Promise<boolean> {
+    const secret = process.env.RECAPTCHA_SECRET_KEY;
+    const googleUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${secret}&response=${recaptchaResponse}`;
+
+    try {
+      const response = await firstValueFrom(this.axios.post(googleUrl));
+      return response.data.success;
+    } catch (error) {
+      // Gérer les erreurs de requête ici
+      console.error(error);
+      return false;
+    }
+  }
+  async register(token: string, recaptchaResponse: string) {
+    const isRecaptchaValid = await this.verifyRecaptcha(recaptchaResponse);
+    if (!isRecaptchaValid) {
+      throw new UnauthorizedException('Échec de la vérification reCAPTCHA');
+    }
     try {
       // Décoder et vérifier le token
       const decoded = jwt.verify(

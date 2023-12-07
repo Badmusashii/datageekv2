@@ -7,12 +7,14 @@ import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Userdg } from 'src/userdg/entities/userdg.entity';
 import { UserdgModule } from '../userdg/userdg.module';
+import { HttpModule } from '@nestjs/axios';
 import * as dotenv from 'dotenv';
 
 dotenv.config({ path: '.env' });
 
 @Module({
   imports: [
+    HttpModule,
     UserdgModule,
     TypeOrmModule.forFeature([Userdg]),
     PassportModule.register({ defaultStrategy: 'jwt' }),

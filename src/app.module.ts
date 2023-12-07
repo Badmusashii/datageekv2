@@ -10,6 +10,8 @@ import { Platform } from './platforms/entities/platform.entity';
 import { Media } from './media/entities/media.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
+import { HttpModule } from '@nestjs/axios';
+import axios from 'axios';
 import { GiantBombService } from './services/giant-bomb/giant-bomb.service';
 import { MoviedatabaseService } from './services/moviedatabase/moviedatabase.service';
 // Importation du middleware pour la limitation de taux de requetes
@@ -20,6 +22,12 @@ import * as cookieParser from 'cookie-parser';
 
 @Module({
   imports: [
+    HttpModule.registerAsync({
+      useFactory: () => ({
+        timeout: 5000,
+        maxRedirects: 5,
+      }),
+    }),
     ConfigModule.forRoot({ envFilePath: ['.env'] }),
     TypeOrmModule.forRoot({
       type: 'postgres',
@@ -44,7 +52,12 @@ import * as cookieParser from 'cookie-parser';
     GiantBombService,
     MoviedatabaseService,
     CertGenerateService,
+    {
+      provide: 'AXIOS_INSTANCE',
+      useValue: axios,
+    },
   ],
+  exports: ['AXIOS_INSTANCE'],
 })
 export class AppModule {
   // Cette méthode permet de configurer des middlewares pour certaines routes ou pour toutes les routes

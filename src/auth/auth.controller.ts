@@ -31,8 +31,10 @@ export class AuthController {
   @Post('register')
   // @UseGuards(AuthGuard('jwt'))
   register(@Body() body) {
+    console.log(body);
     const token = body.token;
-    return this.authService.register(token);
+    const recaptchaResponse = body.recaptchaResponse;
+    return this.authService.register(token, recaptchaResponse);
   }
 
   @ApiOperation({ summary: 'Utiliser pour le login et renvoie un Token' })
