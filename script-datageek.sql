@@ -20,7 +20,7 @@ CREATE TABLE media (
   id SERIAL PRIMARY KEY,
   title VARCHAR(200),
   yearofrelease INTEGER NULL,
-  idapi VARCHAR(10) NULL
+  idapi VARCHAR(10) NOT NULL
 );
 
 CREATE TABLE user_media (
