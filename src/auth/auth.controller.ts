@@ -7,6 +7,9 @@ import {
   Res,
   Patch,
   Req,
+  Get,
+  Headers,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UserdgService } from 'src/userdg/userdg.service';
@@ -26,6 +29,14 @@ export class AuthController {
     private readonly authService: AuthService,
     private userdgService: UserdgService,
   ) {}
+
+  @Get('csrf-token')
+  @UseGuards(AuthGuard('jwt')) // S'assurer que l'utilisateur est authentifié
+  getCsrfToken(@Request() req): { csrfToken: string } {
+    const userId = req.user.id; // Récupérer l'ID de l'utilisateur à partir de la requête
+    const csrfToken = this.authService.generateCsrfToken(userId);
+    return { csrfToken };
+  }
 
   @ApiOperation({ summary: "Utiliser pour la creation d'un utilisateur" })
   @Post('register')
@@ -101,8 +112,13 @@ export class AuthController {
   async updateProfile(
     @Request() req,
     @Body() updateDto: UpdateAuthDto,
+    @Headers('x-csrf-token') csrfToken: string,
   ): Promise<{ message: string }> {
     const userId = req.user.id;
+    const isTokenValid = this.authService.validateCsrfToken(userId, csrfToken);
+    if (!isTokenValid) {
+      throw new UnauthorizedException('Invalid CSRF token');
+    }
     console.log(req);
     console.log(updateDto);
     return this.authService.updateProfile(userId, updateDto);

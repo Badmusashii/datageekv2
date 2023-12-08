@@ -19,33 +19,32 @@ async function bootstrap() {
 
   // Utilisation de cookie-parser pour gérer les cookies
   app.use(cookieParser());
-  app.use(
-    helmet({
-      contentSecurityPolicy: {
-        directives: {
-          defaultSrc: ["'self'"], // Limite tout le contenu par défaut à ton propre serveur
-          scriptSrc: ["'self'", 'https://localhost:4200'], // Autorise les scripts de ton serveur et des API
-          imgSrc: [
-            "'self'",
-            'https://www.giantbomb.com/api',
-            'https://api.themoviedb.org/3',
-            'data:',
-          ], // Autorise les images de sources spécifiques
-          mediaSrc: ["'self'", 'https://api.themoviedb.org/3'],
-          connectSrc: [
-            "'self'",
-            'https://localhost:8080',
-            'https://www.giantbomb.com/api',
-            'https://api.themoviedb.org/3',
-          ], // Autorise les connexions WebSocket et API
-          // frameSrc: ["'self'", 'https://www.adresse-tmdb.com'],
-          frameSrc: ["'none'"],
-          objectSrc: ["'none'"], // Bloque les éléments <object>, <embed>, et <applet>
-          // Ajoute d'autres directives au besoin
-        },
-      },
-    }),
-  );
+  // app.use(
+  //   helmet({
+  //     contentSecurityPolicy: {
+  //       directives: {
+  //         defaultSrc: ["'self'"], // Limite tout le contenu par défaut à ton propre serveur
+  //         scriptSrc: ["'self'", 'https://localhost:4200'], // Autorise les scripts de ton serveur et des API
+  //         imgSrc: [
+  //           "'self'",
+  //           'https://www.giantbomb.com/api',
+  //           'https://api.themoviedb.org/3',
+  //           'data:',
+  //         ], // Autorise les images de sources spécifiques
+  //         mediaSrc: ["'self'", 'https://api.themoviedb.org/3'],
+  //         connectSrc: [
+  //           "'self'",
+  //           'https://localhost:8080',
+  //           'https://www.giantbomb.com/api',
+  //           'https://api.themoviedb.org/3',
+  //         ], // Autorise les connexions WebSocket et API
+  //         // frameSrc: ["'self'", 'https://www.adresse-tmdb.com'],
+
+  //         // Ajoute d'autres directives au besoin
+  //       },
+  //     },
+  //   }),
+  // );
 
   // Activation des CORS pour le frontend
   app.enableCors({

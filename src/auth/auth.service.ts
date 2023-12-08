@@ -18,6 +18,7 @@ import { UserdgService } from 'src/userdg/userdg.service';
 import { firstValueFrom } from 'rxjs';
 import { HttpService } from '@nestjs/axios';
 import { Response as ExpressResponse } from 'express'; // Importation avec un alias pour eviter le soucie de doublon avec Request de Nestjs/common
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class AuthService {
@@ -191,5 +192,24 @@ export class AuthService {
     // Sauvegarder les modifications
     await this.userdgRepository.save(user);
     return { message: 'Profil mis à jour avec succès.' };
+  }
+  generateCsrfToken(userId: number): string {
+    const csrfTokenId = uuidv4(); // Génère un identifiant UUID version 4 unique pour le token
+    const payload = { csrfTokenId, userId };
+    return this.jwtService.sign(payload, {
+      expiresIn: '15m', // Durée de vie courte pour plus de sécurité
+      secret: process.env.CSRF_TOKEN_SECRET, // Utiliser une clé secrète spécifique pour les tokens CSRF
+    });
+  }
+  validateCsrfToken(userId: number, csrfToken: string): boolean {
+    try {
+      const decoded = this.jwtService.verify(csrfToken, {
+        secret: process.env.CSRF_TOKEN_SECRET,
+      });
+
+      return decoded.userId === userId && decoded.csrfTokenId; // Vérifie que le token correspond à l'utilisateur
+    } catch (error) {
+      return false;
+    }
   }
 }
