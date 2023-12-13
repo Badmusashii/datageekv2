@@ -24,7 +24,12 @@ async function bootstrap() {
       contentSecurityPolicy: {
         directives: {
           defaultSrc: ["'self'"], // Limite tout le contenu par défaut à ton propre serveur
-          scriptSrc: ["'self'", 'https://localhost:4200'], // Autorise les scripts de ton serveur et des API
+          scriptSrc: [
+            "'self'",
+            'https://localhost:4200',
+            'https://data-geek.fr',
+            'http://data-geek.fr',
+          ], // Autorise les scripts de ton serveur et des API
           imgSrc: [
             "'self'",
             'https://www.giantbomb.com/api',
@@ -48,7 +53,11 @@ async function bootstrap() {
 
   // Activation des CORS pour le frontend
   app.enableCors({
-    origin: ['https://localhost:4200', 'http://data-geek.fr'],
+    origin: [
+      'https://localhost:4200',
+      'https://data-geek.fr',
+      'http://data-geek.fr',
+    ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
