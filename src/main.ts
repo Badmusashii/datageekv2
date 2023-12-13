@@ -48,7 +48,7 @@ async function bootstrap() {
 
   // Activation des CORS pour le frontend
   app.enableCors({
-    origin: 'https://localhost:4200',
+    origin: ['https://localhost:4200', 'http://data-geek.fr'],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
