@@ -15,7 +15,7 @@ async function bootstrap() {
   };
 
   // Création de l'application NestJS avec les options HTTPS
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { httpsOptions });
 
   // Utilisation de cookie-parser pour gérer les cookies
   app.use(cookieParser());
