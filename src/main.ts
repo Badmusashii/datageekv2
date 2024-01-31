@@ -29,6 +29,8 @@ async function bootstrap() {
             'https://localhost:4200',
             'https://data-geek.fr',
             'http://data-geek.fr',
+            'https://www.gstatic.com',
+            'https://www.google.com',
           ], // Autorise les scripts de ton serveur et des API
           imgSrc: [
             "'self'",
@@ -42,6 +44,7 @@ async function bootstrap() {
             'https://localhost:8080',
             'https://www.giantbomb.com/api',
             'https://api.themoviedb.org/3',
+            'https://www.google.com/recaptcha/',
           ], // Autorise les connexions WebSocket et API
           // frameSrc: ["'self'", 'https://www.adresse-tmdb.com'],
 
